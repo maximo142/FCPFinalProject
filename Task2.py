@@ -2,8 +2,6 @@ import numpy as np
 from numpy import random
 import argparse
 
-threshold = 0.2
-beta = 0.35
 
 def flags():
 	parser = argparse.ArgumentParser(description='Process files')
@@ -129,7 +127,7 @@ def main(flags_results, threshold, beta):
 			array[neighbour_index] = opinion_update_results[3]
 		print(array)
 	else:
-		print('Please provide a flag for how you want code to run')
+		print('Please provide "-defaunt" flag if you want the code to run')
 	
 
 
