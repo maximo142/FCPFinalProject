@@ -1,6 +1,8 @@
 # FCPFinalProject
 
-we each doing one of tasks 1 - 4
-all work together on task 5
+Task 1 - Alawi
+Task 2 - Maximo
+Task 3 - Abdulrazaq
+Task 4 - Heba
 
-boshhhhhh
+Task 5 collaborative
