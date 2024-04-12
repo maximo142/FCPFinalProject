@@ -1,0 +1,15 @@
+argparse needs to be setup and flags created - NOT done
+
+
+selector function picks random individual from 0 - 1000 and either neighbour to their left or right - DONE
+class updates their opinions - DONE
+
+for loop needs to pick random person many many times and apply in the following order:
+selector 
+update opinion - returns new values and the index values for each new opnion value
+for loop then applies info from 'update opinion' replacing the old values in the array
+... process repeats
+
+all DONE
+
+need to work out how to graph all of this as well but cross that bridge when we get to it - NOT done
