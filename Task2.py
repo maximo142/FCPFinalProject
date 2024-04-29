@@ -20,38 +20,15 @@ def flags():
 	return args
 
 
-# class created to apply the function to the two opinions
-# and either bring them closer together or further apart in value
-# if they are close enough according to the threshold
-class Individual:
-	def __init__(self, initial_value, neighbour_value):
-		self.person = initial_value
-		self.neighbour = neighbour_value
-
-	def update(self, threshold, beta):
-		if self.person >= self.neighbour:
-			difference = self.person - self.neighbour
-			
-		elif self.neighbour > self.person:
-			difference = self.neighbour - self.person
-			
-		person_new_value = self.person + (beta * (self.neighbour - self.person))
-		neighbour_new_value = self.neighbour + (beta * (self.person - self.neighbour))
-
-		if difference < threshold:
-			self.person = person_new_value
-			self.neighbour = neighbour_new_value
-
-
-# tests are run between 3 people with scored opinions, opinions of persons 1 and 2 are below 
-# the threshold and so each get updated, this is checked against the knoiwn values they should go to 
+# tests are run between 3 people with quantified opinions, difference in opinions of persons 1 and 2 are below 
+# the threshold and so each get updated, this is checked against the known values they should go to 
 # which have been worked out for the sake of the test. 
 # opinions between persons 1 and 3 should not change as their difference in score is over the threshold
-# so the final two assertions make sure they go uchanged after being fed into the class
-# numbers outputted from class had to be rounded as they potentially had floating point error which 
-# would make it falsely fail the test
-def test(flags_results):
-	args = flags_results
+# so the final two assertions make sure they go unchanged after being fed into the 'opinion update' function.
+# numbers outputted from function had to be rounded as they potentially had floating point error which 
+# would make the tests falsely fail
+def test():
+	
 	person_1 = 0.2
 	person_2 = 0.3
 	person_3 = 0.5
@@ -66,38 +43,56 @@ def test(flags_results):
 	opinion_update_1 = opinion_update(test_array, 0, 1, threshold, beta)
 	opinion_update_2 = opinion_update(test_array, 0, 2, threshold, beta)
 
-	first_person_1_new_calculation = opinion_update_1[1]
-	person_2_new_calculation = opinion_update_1[3]
-	second_person_1_new_calculation = opinion_update_2[1]
-	person_3_new_calculation = opinion_update_2[3]
+	person_1_first_calculation = opinion_update_1[1]
+	person_2_calculation = opinion_update_1[3]
+	person_1_second_calculation = opinion_update_2[1]
+	person_3_calculation = opinion_update_2[3]
 
 
 	if args.test_defuant == True:
-		assert round(first_person_1_new_calculation, 2) == updated_person_1
-		assert round(person_2_new_calculation, 2) == updated_person_2
-		assert round(second_person_1_new_calculation, 2) == person_1
-		assert round(person_3_new_calculation, 2) == person_3
+		assert round(person_1_first_calculation, 2) == updated_person_1
+		assert round(person_2_calculation, 2) == updated_person_2
+		assert round(person_1_second_calculation, 2) == person_1
+		assert round(person_3_calculation, 2) == person_3
 
 		return print('Tests passed')
 
 
-# function that randomly selects idividual of the population
-# and a random one of its two neighbours
+# if there is a command line input for values of threshold and beta it applies it 
+def initialise_threshold_beta(args):
+
+	threshold = float(args.threshold)
+	beta = float(args.beta)
+
+	if args.threshold == None:
+		args.threshold = 0.2
+	if args.beta == None:
+		args.beta = 0.2
+
+	results = [threshold, beta]
+
+	return results
+
+
+# function that randomly selects individual from the population and a random one of its two neighbours
 # if decider is 0 function compares opinion to neighbour on the left
 # and if it is 1 it takes the neighbour to the right
 def selector(array):
-	number_of_indecies = len(array) - 1
-	person_index = random.randint(number_of_indecies)
+	number_of_indicies = len(array) - 1
+	person_index = random.randint(number_of_indicies)
 	decider = random.randint(2)
+
 	if decider == 0 and person_index == 0:
-		neighbour_index = number_of_indecies
+		neighbour_index = number_of_indicies
 	elif decider == 0:
 		neighbour_index = person_index - 1
-	elif person_index == number_of_indecies:
+	elif person_index == number_of_indicies:
 		neighbour_index = 0
 	else:
 		neighbour_index = person_index + 1
-	results = [decider, person_index, neighbour_index]
+
+	results = [person_index, neighbour_index]
+
 	return results
 
 
@@ -109,8 +104,7 @@ def opinion_update(array, person_index, neighbour_index, threshold, beta):
 	neighbour_value = array[neighbour_index]
 
 	if person_value >= neighbour_value:
-		difference = person_value - neighbour_value
-			
+		difference = person_value - neighbour_value	
 	else:
 		difference = neighbour_value - person_value
 	
@@ -121,68 +115,84 @@ def opinion_update(array, person_index, neighbour_index, threshold, beta):
 		person_new_value = person_value
 		neighbour_new_value = neighbour_value
 
-
 	results = [person_index, person_new_value, neighbour_index, neighbour_new_value]
 
 	return results
 
 
-def plot_second_graph(list_of_arrays):
-	plt.figure()
-	for index, array in enumerate(list_of_arrays):
-		
-		index_repeated_list = np.ones(len(array)) * index
-		
-		plt.scatter(index_repeated_list, array, color='red')
+# I have chosen a population size of 150 and for the code to select neighbours 10000 times since there 
+# was no instruction for what those numbers should be nor that it should become a flagged input to 
+# enter in the command line
+def iterate_population(threshold, beta):
+	array = np.random.rand(150)
+	time_duration = 10000
+	list_of_arrays = [array]
+
+	for t in range(time_duration):
+		selector_results = selector(array)
+		person_index = selector_results[0]
+		neighbour_index = selector_results[1]
+
+		opinion_update_results = opinion_update(array, person_index, neighbour_index, threshold, beta)
+		array[person_index] = opinion_update_results[1]
+		array[neighbour_index] = opinion_update_results[3]
+
+		list_of_arrays.append(copy.deepcopy(array))
+
+	results = [array, list_of_arrays]
+
+	return results
+
+
+# plots histogram of final opinions
+def plot_first_graph(array):
+	plt.hist(array)
+	plt.xlabel('Opinion') 
 	plt.show()
 
 
+# plots scatter graph of how the opinions change/converge over time
+# NOTE: this graph takes slightly longer than expected to be displayed, from 30-60 seconds roughly
+def plot_second_graph(list_of_arrays):
+	plt.figure()
 
-def main(flags_results, threshold, beta):
-	args = flags_results
+	for index, array in enumerate(list_of_arrays):
+		index_repeated_list = np.ones(len(array)) * index
+		plt.scatter(index_repeated_list, array, color='red')
+
+	plt.xlabel('Time/Number of Iterations')
+	plt.ylabel('Opinion')
+	plt.show()
+
+
+# main function organises the code and calls the correct functions to produce what 
+# is called for by the flags input on the command line
+def main(args, threshold, beta):
+
 	if args.test_defuant == True:
-		test(args)
+		test()
+
 	print('Threshold =', threshold)
 	print('Beta (coupling parameter) =', beta)
-	if args.defuant == True:
-		array = np.random.rand(150)
-		print(array)
-		time_duration = 10000
-		list_of_arrays = [array]
-		for i in range(time_duration):
-			selector_results = selector(array)
-			
-			person_index = selector_results[1]
-			neighbour_index = selector_results[2]
-			opinion_update_results = opinion_update(array, person_index, neighbour_index, threshold, beta)
-			print(person_index, neighbour_index)
-			array[person_index] = opinion_update_results[1]
-			array[neighbour_index] = opinion_update_results[3]
-			list_of_arrays.append(copy.deepcopy(array))
 
-		
-		plt.hist(array)
-		plt.xlabel('Opinion') 
-		plt.show()
-		plot_second_graph(list_of_arrays)
-		print(list_of_arrays[0])
-		print(list_of_arrays[1])
-		print(list_of_arrays[2])
+	if args.defuant == True:
+
+		iteration_results = iterate_population(threshold, beta)
+		plot_first_graph(iteration_results[0])
+		plot_second_graph(iteration_results[1])
 
 	else:
 		print('Please provide "-defaunt" flag if you want the code to run')
 
 
-
+# boiler plate code begins code and initialises threshold and beta values to be fed into main
 if __name__ == '__main__':
-	flags_results = flags()
-	if flags_results.threshold == None:
-		flags_results.threshold = 0.2
-	if flags_results.beta == None:
-		flags_results.beta = 0.2
-	threshold = float(flags_results.threshold)
-	beta = float(flags_results.beta)
-	main(flags_results, threshold, beta)
+	args = flags()
+	threshold_beta_values = initialise_threshold_beta(args)
+	main(args, threshold_beta_values[0], threshold_beta_values[1])
+
+
+
 
 
 
