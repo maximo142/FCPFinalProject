@@ -62,7 +62,6 @@ class Network:
 
 
 	def plot(self):
-		colour = [["pink", "violet", "hotpink"],["mediumorchid","darkviolet","indigo"]]
 
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
@@ -77,22 +76,6 @@ class Network:
 			node_angle = i * 2 * np.pi / num_nodes
 			node_x = network_radius * np.cos(node_angle)
 			node_y = network_radius * np.sin(node_angle)
-			if self.nodes[i].value >= 0.5:
-				color = colour[0]
-				if self.nodes[i].value >= 0.85:
-					color = color[0]
-				elif self.nodes[i].value >= 0.65:
-					color = color[1]
-				else:
-					color = color[2]
-			else:
-				color = colour[1]
-				if self.nodes[i].value <= 0.15:
-					color = color[2]
-				elif self.nodes[i].value <= 0.35:
-					color = color[1]
-				else:
-					color = color[0]
 
 			circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
 			ax.add_patch(circle)
@@ -254,7 +237,7 @@ def update_network(network, person_index, new_person_value, neighbour_index, new
 # enter in the command line
 def network_iterate_population(network, threshold, beta):
 	
-	time_duration = 10000
+	time_duration = 100
 	
 	list_of_network_arrays = []
 	for t in range(time_duration):
@@ -271,6 +254,8 @@ def network_iterate_population(network, threshold, beta):
 
 		update_network(network, person_index, new_person_value, neighbour_index, new_neighbour_value)
 		value_list = []
+		network.plot()
+		plt.show()
 		for index in range(len(network.nodes)):
 
 			value_list.append(network.nodes[index].value)
@@ -289,6 +274,7 @@ def network_defuant_main(network, args):
 
 	list_of_network_arrays = network_iterate_population(network, threshold, beta)
 	final_iteration = list_of_network_arrays[-1]
+
 	network_plot_first_graph(final_iteration)
 	network_plot_second_graph(list_of_network_arrays)
 
