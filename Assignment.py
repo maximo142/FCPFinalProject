@@ -718,12 +718,12 @@ if __name__ == '__main__':
 		threshold = args.threshold
 		beta = args.beta
 		defuant_main(args, threshold, beta)
-args = flags()
-if args.test_network:
-	test_networks()
-if args.network != None:
-	tsk3 = Network() #Create a network
-	tsk3.make_random_network(args.network)
-	tsk3.plot()
-	plt.show()
-	print("Mean degree:", tsk3.get_mean_degree(),"\nAverage path length:", tsk3.get_mean_path_length(),"\nClustering co-efficient:", tsk3.get_mean_clustering())
+
+	if args.test_network:
+		test_networks()
+	if args.network != None:
+		tsk3 = Network() #Create a network
+		tsk3.make_random_network(args.network)
+		tsk3.plot()
+		plt.show()
+		print("Mean degree:", tsk3.get_mean_degree(),"\nAverage path length:", tsk3.get_mean_path_length(),"\nClustering co-efficient:", tsk3.get_mean_clustering())
