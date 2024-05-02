@@ -13,8 +13,8 @@ def flags():
 		help='runs the defuant model')
 	parser.add_argument('-test_defuant', dest='test_defuant', action='store_true',
 		help='runs tests to check code is crrectly changing opinions')
-	parser.add_argument('-beta', dest='beta', action='store', help='beta value (coupling parameter)')
-	parser.add_argument('-threshold', dest='threshold', action='store', help='threshold value')
+	parser.add_argument('-beta', type=float, nargs=1, default=0.2, dest='beta', action='store', help='beta value (coupling parameter)')
+	parser.add_argument('-threshold', type=float, nargs=1, default=0.2, dest='threshold', action='store', help='threshold value')
 
 	args = parser.parse_args()
 	return args
@@ -58,26 +58,16 @@ def test():
 		return print('Tests passed')
 
 
-# if there is a command line input for values of threshold and beta it applies it 
-def initialise_threshold_beta(args):
 
-	threshold = float(args.threshold)
-	beta = float(args.beta)
-
-	if args.threshold == None:
-		args.threshold = 0.2
-	if args.beta == None:
-		args.beta = 0.2
-
-	results = [threshold, beta]
-
-	return results
-
-
-# function that randomly selects individual from the population and a random one of its two neighbours
-# if decider is 0 function compares opinion to neighbour on the left
-# and if it is 1 it takes the neighbour to the right
 def selector(array):
+
+	"""
+	function that randomly selects individual from the population and a random one of its two neighbours
+	if decider is 0 function compares opinion to neighbour on the left
+	and if it is 1 it takes the neighbour to the right
+
+	"""
+
 	number_of_indicies = len(array) - 1
 	person_index = random.randint(number_of_indicies)
 	decider = random.randint(2)
@@ -167,15 +157,15 @@ def plot_second_graph(list_of_arrays):
 
 # main function organises the code and calls the correct functions to produce what 
 # is called for by the flags input on the command line
-def main(args, threshold, beta):
+def defuant_main(args, threshold, beta):
 
-	if args.test_defuant == True:
+	if args.test_defuant:
 		test()
 
 	print('Threshold =', threshold)
 	print('Beta (coupling parameter) =', beta)
 
-	if args.defuant == True:
+	if args.defuant:
 
 		iteration_results = iterate_population(threshold, beta)
 		plot_first_graph(iteration_results[0])
@@ -188,8 +178,7 @@ def main(args, threshold, beta):
 # boiler plate code begins code and initialises threshold and beta values to be fed into main
 if __name__ == '__main__':
 	args = flags()
-	threshold_beta_values = initialise_threshold_beta(args)
-	main(args, threshold_beta_values[0], threshold_beta_values[1])
+	defuant_main(args, args.threshold, args.beta)
 
 
 
