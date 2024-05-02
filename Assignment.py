@@ -156,7 +156,7 @@ class Network:
 		# Calculate mean path length by dividing total path length by the number of paths and rounding the result to 15 decimal places
 		return round(total_path_length / (len(self.nodes) * (len(self.nodes) - 1)), 15)
 	# END OF TASK 3
-
+	# TASK 4
 	def make_random_network(self,N,connection_probability=0.5):
 		'''
 		This function makes a *random* network of size N.
@@ -174,13 +174,89 @@ class Network:
 				if np.random.random() < connection_probability:
 					node.connections[neighbour_index] = 1
 					self.nodes[neighbour_index].connections[index] = 1
-		#print(self.nodes)
 
-##	def make_ring_network(self, N, neighbour_range=1):
-##		#Your code  for task 4 goes here
-##
-##	def make_small_world_network(self, N, re_wire_prob=0.2):
-##		#Your code for task 4 goes here
+
+
+	def make_ring_network(self, N, neighbour_range=1):
+		self.nodes = []
+		for node_number in range(N):
+			value = np.random.random()
+			connections = [0 for _ in range(N)]
+			self.nodes.append(Node(value, node_number, connections))
+
+		for (index, node) in enumerate(self.nodes):
+			cursor = index
+
+			for forward in range(neighbour_range):
+				cursor += 1
+				if cursor == N:
+					cursor = 0
+
+				node.connections[cursor] = 1
+				self.nodes[cursor].connections[index] = 1
+
+			cursor = index
+
+			for backward in range(neighbour_range):
+				cursor -= 1
+				if cursor == -1:
+					cursor = N - 1
+
+				node.connections[cursor] = 1
+				self.nodes[cursor].connections[index] = 1
+
+	def make_small_world_network(self, N, re_wire_prob=0.2):
+		self.make_ring_network(N, 2)
+
+		for (index, node) in enumerate(self.nodes):
+			# edge_blacklist = []
+
+			for edge_index, edge in enumerate(node.connections):
+				if edge == 1:  # and not edge_index in edge_blacklist:
+					if np.random.random() < re_wire_prob:
+						while True:
+							new_connection_index = np.random.randint(0, N)
+
+							if new_connection_index != index and new_connection_index != edge_index and \
+								node.connections[new_connection_index] != 1 and \
+								self.nodes[new_connection_index].connections[
+								index] != 1:  # and not new_connection_index in edge_blacklist:
+								print("Rewiring edge...")
+								node.connections[new_connection_index] = 1
+								self.nodes[new_connection_index].connections[index] = 1
+
+								node.connections[edge_index] = 0
+								self.nodes[edge_index].connections[index] = 0
+
+								# edge_blacklist.append(new_connection_index)
+								break
+
+	def plot_task4(self):
+		fig = plt.figure()
+		ax = fig.add_subplot(111)
+		ax.set_axis_off()
+
+		num_nodes = len(self.nodes)
+		network_radius = num_nodes * 10
+		ax.set_xlim([-1.5 * network_radius, 1.5 * network_radius])
+		ax.set_ylim([-1.5 * network_radius, 1.5 * network_radius])
+
+		for (i, node) in enumerate(self.nodes):
+			node_angle = i * 2 * np.pi / num_nodes
+			node_x = network_radius * np.cos(node_angle)
+			node_y = network_radius * np.sin(node_angle)
+
+			circle = plt.Circle((node_x, node_y), 30, color=cm.hot(node.value))
+			ax.add_patch(circle)
+
+		for neighbour_index in range(i + 1, num_nodes):
+			if node.connections[neighbour_index]:
+				neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
+				neighbour_x = network_radius * np.cos(neighbour_angle)
+				neighbour_y = network_radius * np.sin(neighbour_angle)
+
+				ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
+	# END OF TASK 4
 
 	def plot(self):
 
