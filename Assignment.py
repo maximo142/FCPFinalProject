@@ -710,6 +710,14 @@ def network_defuant_main(network, args):
 # boiler plate code begins code and initialises threshold and beta values to be fed into main
 if __name__ == '__main__':
 	args = flags()
+	#task 1
+	if args.test_ising:
+        	test_ising()
+		
+    	if args.ising_model:
+        	# Run the ising_model function with provided alpha and external field values
+        	ising_model(population=a1, alpha=args.alpha, external=args.external)
+	#task 2
 	if args.defuant and args.use_network != None:
 		network = apply_network_method(args)
 		network_defuant_main(network, args)
@@ -718,7 +726,7 @@ if __name__ == '__main__':
 		threshold = args.threshold
 		beta = args.beta
 		defuant_main(args, threshold, beta)
-
+	#task 3
 	if args.test_network:
 		test_networks()
 	if args.network != None:
