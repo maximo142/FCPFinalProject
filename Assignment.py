@@ -33,6 +33,7 @@ def flags():
                 help='Creates a random network with N number of nodes')
 	args = parser.parse_args()
 	return args
+
 class Node:
 
 	def __init__(self, value, number,connections=None):
@@ -48,7 +49,7 @@ class Network:
                         self.nodes = []
                 else:
                         self.nodes = nodes
-
+	# TASK 3
 	def breadth_first_search(self, start_node_index):
 		"""
 		Performs breadth-first search starting from the given start node index.
@@ -154,7 +155,7 @@ class Network:
 
 		# Calculate mean path length by dividing total path length by the number of paths and rounding the result to 15 decimal places
 		return round(total_path_length / (len(self.nodes) * (len(self.nodes) - 1)), 15)
-
+	# END OF TASK 3
 
 	def make_random_network(self,N,connection_probability=0.5):
 		'''
