@@ -226,20 +226,6 @@ def test_networks():
 	assert(network.get_mean_path_length()==1), network.get_mean_path_length()
 
 	print("All tests passed")
-
-network = Network()
-#print(network.nodes)
-#print(network.nodes[1].connections)
-#print(network.get_mean_degree())
-#print(network.get_mean_clustering())
-#print(network.get_mean_path_length())
-#test_networks()
-for i in range(10):
-	network.make_random_network(7)
-	network.plot()
-	plt.pause(1)
-	plt.close()
-	plt.show()
 N = 0
 for element in sys.argv: #Iterate through the flags
 	if element == "-test_network":

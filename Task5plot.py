@@ -62,10 +62,7 @@ class Network:
 
 
 	def plot(self):
-
-
 		colour = [["pink", "violet", "hotpink"],["mediumorchid","darkviolet","indigo"]]
-
 
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
@@ -80,7 +77,6 @@ class Network:
 			node_angle = i * 2 * np.pi / num_nodes
 			node_x = network_radius * np.cos(node_angle)
 			node_y = network_radius * np.sin(node_angle)
-
 			if self.nodes[i].value >= 0.5:
 				color = colour[0]
 				if self.nodes[i].value >= 0.85:
@@ -97,9 +93,14 @@ class Network:
 					color = color[1]
 				else:
 					color = color[0]
-
-
-			circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
+			value = round(self.nodes[i].value, 4)
+			circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=color)
+			if node_x < -50:
+				plt.text(node_x-25,node_y-15, value)
+			elif node_y < 0:
+				plt.text(node_x-10, node_y-20,value)
+			else:
+				plt.text(node_x+5, node_y+10,value)
 			ax.add_patch(circle)
 
 			for neighbour_index in range(i+1, num_nodes):
@@ -227,24 +228,6 @@ def network_opinion_update(person_value, neighbour_value, threshold, beta):
 	return results
 
 
-def network_plot_first_graph(last_iteration):
-	
-	plt.hist(last_iteration)
-	plt.xlabel('Opinion') 
-	plt.show()
-
-
-def network_plot_second_graph(list_of_network_arrays):
-	plt.figure()
-
-	for index, array in enumerate(list_of_network_arrays):
-		index_repeated_list = np.ones(len(array)) * index
-		plt.scatter(index_repeated_list, array, color='red')
-
-	plt.xlabel('Time/Number of Iterations')
-	plt.ylabel('Opinion')
-	plt.show()
-
 
 def update_network(network, person_index, new_person_value, neighbour_index, new_neighbour_value):
 	network.nodes[person_index].value = new_person_value
@@ -277,6 +260,8 @@ def network_iterate_population(network, threshold, beta):
 		update_network(network, person_index, new_person_value, neighbour_index, new_neighbour_value)
 		value_list = []
 		network.plot()
+		plt.pause(0.2)
+		plt.close()
 		plt.show()
 		for index in range(len(network.nodes)):
 
@@ -296,11 +281,6 @@ def network_defuant_main(network, args):
 
 	list_of_network_arrays = network_iterate_population(network, threshold, beta)
 	final_iteration = list_of_network_arrays[-1]
-
-	network_plot_first_graph(final_iteration)
-	network_plot_second_graph(list_of_network_arrays)
-
-
 
 
 
