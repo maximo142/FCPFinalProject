@@ -4,31 +4,37 @@ import argparse
 import matplotlib.pyplot as plt
 import copy
 
-# function uses argparse package to allow flags to be used in the command line to alter how
-# the code is run 
+
 def flags():
+	"""
+	function uses argparse package to allow flags to be used in the command line to alter how the code is run 
+	"""
 	parser = argparse.ArgumentParser(description='Process files')
 	
 	parser.add_argument('-defuant', dest='defuant', action='store_true',
 		help='runs the defuant model')
 	parser.add_argument('-test_defuant', dest='test_defuant', action='store_true',
 		help='runs tests to check code is crrectly changing opinions')
-	parser.add_argument('-beta', type=float, nargs=1, default=0.2, dest='beta', action='store', help='beta value (coupling parameter)')
-	parser.add_argument('-threshold', type=float, nargs=1, default=0.2, dest='threshold', action='store', help='threshold value')
+	parser.add_argument('-beta', type=float, default=0.2, dest='beta', action='store', help='beta value (coupling parameter)')
+	parser.add_argument('-threshold', type=float, default=0.2, dest='threshold', action='store', help='threshold value')
 
 	args = parser.parse_args()
 	return args
 
 
-# tests are run between 3 people with quantified opinions, difference in opinions of persons 1 and 2 are below 
-# the threshold and so each get updated, this is checked against the known values they should go to 
-# which have been worked out for the sake of the test. 
-# opinions between persons 1 and 3 should not change as their difference in score is over the threshold
-# so the final two assertions make sure they go unchanged after being fed into the 'opinion update' function.
-# numbers outputted from function had to be rounded as they potentially had floating point error which 
-# would make the tests falsely fail
 def test():
 	
+	"""
+	tests are run between 3 people with quantified opinions, difference in opinions of persons 1 and 2 are below 
+	the threshold and so each get updated, this is checked against the known values they should go to 
+	which have been worked out for the sake of the test. 
+	opinions between persons 1 and 3 should not change as their difference in score is over the threshold
+	so the final two assertions make sure they go unchanged after being fed into the 'opinion update' function.
+	numbers outputted from function had to be rounded as they potentially had floating point error which 
+	would make the tests falsely fail
+
+	"""
+
 	person_1 = 0.2
 	person_2 = 0.3
 	person_3 = 0.5
@@ -58,7 +64,6 @@ def test():
 		return print('Tests passed')
 
 
-
 def selector(array):
 
 	"""
@@ -86,9 +91,11 @@ def selector(array):
 	return results
 
 
-# function applies formula to the two randomly selected people's opinions providing they lie
-# close enough together to satisfy the threshold limit
 def opinion_update(array, person_index, neighbour_index, threshold, beta):
+	"""
+	function applies formula to the two randomly selected people's opinions providing they lie
+	close enough together to satisfy the threshold limit
+	"""
 
 	person_value = array[person_index]
 	neighbour_value = array[neighbour_index]
@@ -110,11 +117,14 @@ def opinion_update(array, person_index, neighbour_index, threshold, beta):
 	return results
 
 
-# I have chosen a population size of 150 and for the code to select neighbours 10000 times since there 
-# was no instruction for what those numbers should be nor that it should become a flagged input to 
-# enter in the command line
 def iterate_population(threshold, beta):
-	array = np.random.rand(150)
+	"""
+	a population size of 150 was defaulty chosen and for the code to select neighbours 10000 times since there 
+	was no instruction for what those numbers should be nor that it should become a flagged input to 
+	enter in the command line
+	"""
+	population size = 150
+	array = np.random.rand(population_size)
 	time_duration = 10000
 	list_of_arrays = [array]
 
@@ -134,16 +144,21 @@ def iterate_population(threshold, beta):
 	return results
 
 
-# plots histogram of final opinions
 def plot_first_graph(array):
+	"""
+	plots histogram of final opinions
+	"""
 	plt.hist(array)
 	plt.xlabel('Opinion') 
 	plt.show()
 
 
-# plots scatter graph of how the opinions change/converge over time
-# NOTE: this graph takes slightly longer than expected to be displayed, from 30-60 seconds roughly
+
 def plot_second_graph(list_of_arrays):
+	"""
+	plots scatter graph of how the opinions change/converge over time
+	NOTE: this graph takes slightly longer than expected to be displayed, from 30-60 seconds roughly
+	"""
 	plt.figure()
 
 	for index, array in enumerate(list_of_arrays):
@@ -155,9 +170,11 @@ def plot_second_graph(list_of_arrays):
 	plt.show()
 
 
-# main function organises the code and calls the correct functions to produce what 
-# is called for by the flags input on the command line
 def defuant_main(args, threshold, beta):
+	"""
+	main function organises the code and calls the correct functions to produce what 
+	is called for by the flags input on the command line
+	"""
 
 	if args.test_defuant:
 		test()
@@ -175,10 +192,15 @@ def defuant_main(args, threshold, beta):
 		print('Please provide "-defaunt" flag if you want the code to run')
 
 
-# boiler plate code begins code and initialises threshold and beta values to be fed into main
 if __name__ == '__main__':
+	"""
+	boiler plate code begins code and initialises threshold and beta values to be fed into main
+	"""
 	args = flags()
-	defuant_main(args, args.threshold, args.beta)
+	threshold = args.threshold
+	beta = args.beta
+
+	defuant_main(args, threshold, beta)
 
 
 
