@@ -18,7 +18,7 @@ def flags():
 	parser.add_argument('-ising_model', dest='ising_model', action='store_true',
                 help='runs the ising model')
 	parser.add_argument('-alpha', type=float, default=1, dest='alpha', action='store', help='Choose the value for Alpha')
-	parser.add_argument('-external', type=float, default=0, dest='H', action='store', help='Choose value for H')
+	parser.add_argument('-external', type=float, default=0, dest='external', action='store', help='Choose value for H')
 	parser.add_argument('-defuant', dest='defuant', action='store_true',
 		help='runs the defuant model')
 	parser.add_argument('-test_defuant', dest='test_defuant', action='store_true',
@@ -280,6 +280,7 @@ def test_networks():
 	assert(network.get_mean_path_length()==1), network.get_mean_path_length()
 
 	print("All tests passed")
+
 # TASK 1
 def create_array(rows, cols):
 	'''
@@ -403,7 +404,7 @@ def test_ising():
 	print("Tests passed")
 
 
-def ising_model(population, alpha, external):
+def ising_model(population=a1, alpha, external):
 	fig = plt.figure()
 	ax = fig.add_subplot(111)
 	ax.set_axis_off()
@@ -712,11 +713,12 @@ if __name__ == '__main__':
 	args = flags()
 	#task 1
 	if args.test_ising:
-        	test_ising()
+		test_ising()
 
-    	if args.ising_model:
-        # Run the ising_model function with provided alpha and external field values
-        	ising_model(population=a1, alpha=args.alpha, external=args.external)
+	if args.ising_model:
+		print(args.alpha, args.external)
+		# Run the ising_model function with provided alpha and external field values
+		ising_model(population=a1, alpha=args.alpha, external=args.external)
 
 			
 	#task 2
