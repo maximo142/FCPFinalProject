@@ -62,6 +62,7 @@ class Network:
 
 
 	def plot(self):
+		colour = [["pink", "violet", "hotpink"],["mediumorchid","darkviolet","indigo"]]
 
 		fig = plt.figure()
 		ax = fig.add_subplot(111)
@@ -76,6 +77,22 @@ class Network:
 			node_angle = i * 2 * np.pi / num_nodes
 			node_x = network_radius * np.cos(node_angle)
 			node_y = network_radius * np.sin(node_angle)
+			if self.nodes[i].value >= 0.5:
+				color = colour[0]
+				if self.nodes[i].value >= 0.85:
+					color = color[0]
+				elif self.nodes[i].value >= 0.65:
+					color = color[1]
+				else:
+					color = color[2]
+			else:
+				color = colour[1]
+				if self.nodes[i].value <= 0.15:
+					color = color[2]
+				elif self.nodes[i].value <= 0.35:
+					color = color[1]
+				else:
+					color = color[0]
 
 			circle = plt.Circle((node_x, node_y), 0.3*num_nodes, color=cm.hot(node.value))
 			ax.add_patch(circle)
