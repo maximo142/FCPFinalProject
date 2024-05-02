@@ -23,7 +23,7 @@ def create_array(rows, cols):
 a1 = create_array(100, 100)  # creat 100 by 100 array called a1
 
 
-def calculate_agreement(population, row, col, H=0):
+def calculate_agreement(population, row, col, external=0):
     '''
     This function should return the extent to which a cell agrees with its neighbours.
     Inputs:
@@ -48,12 +48,12 @@ def calculate_agreement(population, row, col, H=0):
     cell_current_value = population[row, col]
 
     # agreement as the sum of the products of neighboring values and the cell's value
-    agreement = sum(cell_current_value * value for value in neighbors_values) + (cell_current_value * H)
+    agreement = sum(cell_current_value * value for value in neighbors_values) + (cell_current_value * external)
 
     return agreement
 
 
-def ising_step(population, alpha, H):
+def ising_step(population, alpha, external):
     '''
     This function will perform a single update of the Ising model
     Inputs:
@@ -66,13 +66,14 @@ def ising_step(population, alpha, H):
     row = np.random.randint(0, n_rows)
     col = np.random.randint(0, n_cols)
 
-    agreement = calculate_agreement(population, row, col, H)
+    agreement = calculate_agreement(population, row, col, external)
 
     if agreement < 0:
         population[row, col] *= -1
-
-    probability = math.exp(-agreement / alpha)  # use the probalitity formula from Task 1 (condition 2)
-
+    if alpha != 0: # make sure we did not get mathmatic erorr
+        probability = math.exp(-agreement / alpha)  # use the probalitity formula from Task 1 (condition 2)
+    else:
+        probability = 0
     random_float = random.random()  # generate a random float from 0 to 1 to take the correct porbability (condition 2)
 
     # condition 2: even when agreement is  positive, this condition we choose to accept flips that reduce agreement with probability
@@ -128,7 +129,7 @@ def test_ising():
     print("Tests passed")
 
 
-def ising_main(population, alpha, H):
+def ising_model(population, alpha, external):
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.set_axis_off()
@@ -138,7 +139,7 @@ def ising_main(population, alpha, H):
     for frame in range(100):
         # Iterating single steps 1000 times to form an update
         for step in range(1000):
-            ising_step(population, alpha, H)
+            ising_step(population, alpha, external)
         print('Step:', frame, end='\r')
         plot_ising(im, population)
 
@@ -146,22 +147,22 @@ def ising_main(population, alpha, H):
 def flags():
     Main = False  # boolean flag to determine whether to run ising_main
     alpha = 1  # default value for alpha
-    H = 0  # default value for H (the external magnetic field)
+    external = 0  # default value for H (the external magnetic field)
 
     #  loop through arguments to set simulation parameters
     for args in range(len(sys.argv)):
         if sys.argv[args] == "-test_ising":
             test_ising()  # run the test_ising function if the flag is present
-        if sys.argv[args] == "-H":
+        if sys.argv[args] == "-external":
             H = float(sys.argv[args + 1])  # set H to the next argument value if the flag is present
         if sys.argv[args] == "-alpha":
             alpha = float(sys.argv[args + 1])  # set alpha to the next argument value if the flag is present
-        if sys.argv[args] == "-ising_main":
+        if sys.argv[args] == "-ising_model":
             Main = True  # this flag will help to run the function with the initial values of H and alpha as asked
 
         # this will help to add diffrent values for H and alpha and run the function to see the change
     if Main == True:
-        ising_main(population=a1, alpha=alpha, H=H)  # Ensure 'a1'(array) is defined or imported appropriately here we
+        ising_model(population=a1, alpha=alpha, external=external)  # Ensure 'a1'(array) is defined or imported appropriately here we
         # call the population array we have created (a1)
 
 
