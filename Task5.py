@@ -14,14 +14,13 @@ def flags():
 	parser.add_argument('-test_defuant', dest='test_defuant', action='store_true',
 		help='runs tests to check code is crrectly changing opinions')
 	parser.add_argument('-use_network', type=int, dest='use_network', action='store', 
-		help='uses a random network to run the model instead of a linear array')
-	parser.add_argument('-beta', type=float, nargs=1, default=0.5, dest='beta', action='store', help='beta value (coupling parameter)')
-	parser.add_argument('-threshold', type=float, nargs=1, default=0.5, dest='threshold', action='store', help='threshold value')
+		help='uses a random network to run the model instead of a linear array with <N> number of nodes/people')
+	parser.add_argument('-beta', type=float, default=0.2, dest='beta', action='store', help='beta value (coupling parameter)')
+	parser.add_argument('-threshold', type=float, default=0.2, dest='threshold', action='store', help='threshold value')
 
 	args = parser.parse_args()
 	return args
 
-# CHANGE DEFAULT VALUES BACK TO 0.2
 
 class Node:
 
@@ -150,7 +149,6 @@ def apply_network_method(args):
 
 
 
-
 def selector_network(network):
 	total_number_of_indices = len(network.nodes) - 1
 	person_index = random.randint(total_number_of_indices)
@@ -206,8 +204,6 @@ def network_opinion_update(person_value, neighbour_value, threshold, beta):
 
 	return results
 
-def network_defuant(network, threshold, beta):
-	network_iterate_population(network, threshold, beta)
 
 def network_plot_first_graph(last_iteration):
 	
@@ -233,7 +229,6 @@ def update_network(network, person_index, new_person_value, neighbour_index, new
 	network.nodes[neighbour_index].value = new_neighbour_value
 
 	return network
-
 
 
 
@@ -267,23 +262,18 @@ def network_iterate_population(network, threshold, beta):
 	return list_of_network_arrays
 
 
-def network_defuant(network, threshold, beta):
+
+def network_defuant_main(network, args):
+	
+	threshold = args.threshold
+	beta = args.beta
+	print('Threshold =', threshold)
+	print('Beta (coupling parameter) =', beta)
+
 	list_of_network_arrays = network_iterate_population(network, threshold, beta)
 	final_iteration = list_of_network_arrays[-1]
 	network_plot_first_graph(final_iteration)
 	network_plot_second_graph(list_of_network_arrays)
-
-
-def network_defuant_main(network, args):
-	threshold = args.threshold
-	beta = args.beta
-
-	if args.use_network != None:
-		network_defuant(network, threshold, beta)
-
-
-
-
 
 
 
@@ -292,11 +282,10 @@ def network_defuant_main(network, args):
 # boiler plate code begins code and initialises threshold and beta values to be fed into main
 if __name__ == '__main__':
 	args = flags()
-	network = apply_network_method(args)
-	network_defuant_main(network, args)
+	if args.use_network != None:
+		network = apply_network_method(args)
+		network_defuant_main(network, args)
 	
-
-
 
 
 
