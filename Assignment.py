@@ -818,13 +818,11 @@ def network_defuant_main(network, args):
 # boiler plate code begins code and processing of flags - count impemented to prevent running of unwanted code
 if __name__ == '__main__':
 	args = flags()
-	count = 0
+
 	#task 1
 	if args.test_ising:
-		count += 1
 		test_ising()
 	if args.ising_model:
-		count += 1
 		print(args.alpha, args.external)
 		# Run the ising_model function with provided alpha and external field values
 		ising_model(population=a1, alpha=args.alpha, external=args.external)
@@ -832,23 +830,19 @@ if __name__ == '__main__':
 			
 	#task 5
 	if args.defuant and args.use_network != None:
-		count += 1
 		network = apply_network_method(args)
 		network_defuant_main(network, args)
 
 	#task 2
 	elif args.use_network == None:
-		count += 1
 		threshold = args.threshold
 		beta = args.beta
 		defuant_main(args, threshold, beta)
 
 	#task 3	
 	if args.test_network:
-		count += 1
 		test_networks()
 	if args.network != None:
-		
 		tsk3 = Network() #Create a network
 		tsk3.make_random_network(args.network)
 		tsk3.plot()
@@ -857,12 +851,8 @@ if __name__ == '__main__':
 
 	#task 4
 	if args.ring_network != None:
-		
 		apply_ring_network_method(args)
 	elif args.small_world != None:
-		
 		apply_small_world_method(args)
 	
-	
-
 
