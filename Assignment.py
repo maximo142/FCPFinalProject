@@ -19,18 +19,27 @@ def flags():
                 help='runs the ising model')
 	parser.add_argument('-alpha', type=float, default=1, dest='alpha', action='store', help='Choose the value for Alpha')
 	parser.add_argument('-external', type=float, default=0, dest='external', action='store', help='Choose value for H')
+	
 	parser.add_argument('-defuant', dest='defuant', action='store_true',
 		help='runs the defuant model')
 	parser.add_argument('-test_defuant', dest='test_defuant', action='store_true',
 		help='runs tests to check code is crrectly changing opinions')
+
 	parser.add_argument('-use_network', type=int, dest='use_network', action='store', 
 		help='uses a random network to run the model instead of a linear array with <N> number of nodes/people')
 	parser.add_argument('-beta', type=float, default=0.2, dest='beta', action='store', help='beta value (coupling parameter)')
 	parser.add_argument('-threshold', type=float, default=0.2, dest='threshold', action='store', help='threshold value')
+
 	parser.add_argument('-test_network', dest='test_network', action='store_true',
                 help='runs tests to check if network runs correctly')
 	parser.add_argument('-network', type=int, dest='network', action='store',
                 help='Creates a random network with N number of nodes')
+
+	parser.add_argument('-ring_network', type=int, dest='ring_network', action='store', help='create a ring network')
+	parser.add_argument('-small_world', type=int, dest='small_world', action='store', help='create a small-worlds network with default parameters')
+	parser.add_argument('-re_wire', type=float, dest='re_wire', action='store', 
+		help='create a small worlds network with the value given being the re-wiring probability')
+
 	args = parser.parse_args()
 	return args
 
@@ -155,8 +164,8 @@ class Network:
 
 		# Calculate mean path length by dividing total path length by the number of paths and rounding the result to 15 decimal places
 		return round(total_path_length / (len(self.nodes) * (len(self.nodes) - 1)), 15)
-	# END OF TASK 3
-	# TASK 4
+
+
 	def make_random_network(self,N,connection_probability=0.5):
 		'''
 		This function makes a *random* network of size N.
@@ -174,9 +183,9 @@ class Network:
 				if np.random.random() < connection_probability:
 					node.connections[neighbour_index] = 1
 					self.nodes[neighbour_index].connections[index] = 1
+		# END OF TASK 3
 
-
-
+	# TASK 4
 	def make_ring_network(self, N, neighbour_range=1):
 		self.nodes = []
 		for node_number in range(N):
@@ -205,6 +214,7 @@ class Network:
 				node.connections[cursor] = 1
 				self.nodes[cursor].connections[index] = 1
 
+
 	def make_small_world_network(self, N, re_wire_prob=0.2):
 		self.make_ring_network(N, 2)
 
@@ -230,6 +240,7 @@ class Network:
 
 								# edge_blacklist.append(new_connection_index)
 								break
+
 
 	def plot_task4(self):
 		fig = plt.figure()
@@ -356,6 +367,8 @@ def test_networks():
 	assert(network.get_mean_path_length()==1), network.get_mean_path_length()
 
 	print("All tests passed")
+
+
 
 # TASK 1
 def create_array(rows, cols):
@@ -648,23 +661,44 @@ def defuant_main(args, threshold, beta):
 	if args.test_defuant:
 		test()
 
-	print('Threshold =', threshold)
-	print('Beta (coupling parameter) =', beta)
-
 	if args.defuant:
 
+		print('Threshold =', threshold)
+		print('Beta (coupling parameter) =', beta)
 		iteration_results = iterate_population(threshold, beta)
 		plot_first_graph(iteration_results[0])
 		plot_second_graph(iteration_results[1])
 
-	else:
-		print('Please provide "-defaunt" flag if you want the code to run')
+
+# TASK 4 continued
+
+def task4plot(network):
+	network.plot_task4()
+	plt.show()
+
+
+def apply_ring_network_method(args):
+	network = Network()
+	network_size = args.ring_network
+	network.make_ring_network(network_size)
+
+	task4plot(network)
+
+
+def apply_small_world_method(args):
+	network = Network()
+	network_size = args.small_world
+	re_wire_prob = args.re_wire
+	network.make_small_world_network(network_size, re_wire_prob)
+
+	task4plot(network)
+
 
 
 # TASK 5
 def apply_network_method(args):
 	network = Network()
-	network_size = int(args.use_network)
+	network_size = args.use_network
 	network.make_random_network(network_size, connection_probability=0.5)
 
 	return network
@@ -783,7 +817,7 @@ def network_defuant_main(network, args):
 
 
 
-# boiler plate code begins code and initialises threshold and beta values to be fed into main
+# boiler plate code begins code and processing of flags
 if __name__ == '__main__':
 	args = flags()
 	#task 1
@@ -796,11 +830,12 @@ if __name__ == '__main__':
 		ising_model(population=a1, alpha=args.alpha, external=args.external)
 
 			
-	#task 2
+	#task 5
 	if args.defuant and args.use_network != None:
 		network = apply_network_method(args)
 		network_defuant_main(network, args)
 
+	#task 2
 	elif args.use_network == None:
 		threshold = args.threshold
 		beta = args.beta
@@ -814,4 +849,18 @@ if __name__ == '__main__':
 		tsk3.plot()
 		plt.show()
 		print("Mean degree:", tsk3.get_mean_degree(),"\nAverage path length:", tsk3.get_mean_path_length(),"\nClustering co-efficient:", tsk3.get_mean_clustering())
+
 	#task 4
+	if args.ring_network != None:
+		apply_ring_network_method(args)
+
+	if args.small_world != None and args.re_wire != None:
+		apply_small_world_method(args)
+
+	elif args.small_world != None:
+		args.re_wire = 0.2
+		apply_small_world_method(args)
+
+	
+
+
