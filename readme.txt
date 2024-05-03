@@ -5,6 +5,8 @@ To run the code with python, when in the correct directory, use the following sy
 
 python assignment.py <flag> 
 
+Link to github repo: https://github.com/maximo142/FCPFinalProject
+
 Flags include:
 Task1:
 -test_ising
