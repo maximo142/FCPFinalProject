@@ -37,7 +37,7 @@ def flags():
 
 	parser.add_argument('-ring_network', type=int, dest='ring_network', action='store', help='create a ring network')
 	parser.add_argument('-small_world', type=int, dest='small_world', action='store', help='create a small-worlds network with default parameters')
-	parser.add_argument('-re_wire', type=float, dest='re_wire', action='store', 
+	parser.add_argument('-re_wire', type=float, default=0.2, dest='re_wire', action='store', 
 		help='create a small worlds network with the value given being the re-wiring probability')
 
 	args = parser.parse_args()
@@ -815,14 +815,16 @@ def network_defuant_main(network, args):
 
 
 
-# boiler plate code begins code and processing of flags
+# boiler plate code begins code and processing of flags - count impemented to prevent running of unwanted code
 if __name__ == '__main__':
 	args = flags()
+	count = 0
 	#task 1
 	if args.test_ising:
+		count += 1
 		test_ising()
-
 	if args.ising_model:
+		count += 1
 		print(args.alpha, args.external)
 		# Run the ising_model function with provided alpha and external field values
 		ising_model(population=a1, alpha=args.alpha, external=args.external)
@@ -830,18 +832,23 @@ if __name__ == '__main__':
 			
 	#task 5
 	if args.defuant and args.use_network != None:
+		count += 1
 		network = apply_network_method(args)
 		network_defuant_main(network, args)
 
 	#task 2
 	elif args.use_network == None:
+		count += 1
 		threshold = args.threshold
 		beta = args.beta
 		defuant_main(args, threshold, beta)
+
 	#task 3	
 	if args.test_network:
+		count += 1
 		test_networks()
 	if args.network != None:
+		
 		tsk3 = Network() #Create a network
 		tsk3.make_random_network(args.network)
 		tsk3.plot()
@@ -850,15 +857,12 @@ if __name__ == '__main__':
 
 	#task 4
 	if args.ring_network != None:
+		
 		apply_ring_network_method(args)
-
-	if args.small_world != None and args.re_wire != None:
-		apply_small_world_method(args)
-
 	elif args.small_world != None:
-		args.re_wire = 0.2
+		
 		apply_small_world_method(args)
-
+	
 	
 
 
