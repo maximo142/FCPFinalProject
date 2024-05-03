@@ -54,10 +54,10 @@ class Node:
 class Network: 
 
 	def __init__(self, nodes=None):
-                if nodes is None:
-                        self.nodes = []
-                else:
-                        self.nodes = nodes
+		if nodes is None:
+			self.nodes = []
+		else:
+			self.nodes = nodes
 	# TASK 3
 	def breadth_first_search(self, start_node_index):
 		"""
@@ -193,10 +193,10 @@ class Network:
 			connections = [0 for _ in range(N)]
 			self.nodes.append(Node(value, node_number, connections))
 
-		for (index, node) in enumerate(self.nodes):
+		for (index, node) in enumerate(self.nodes): # Iterate over each node
 			cursor = index
 
-			for forward in range(neighbour_range):
+			for forward in range(neighbour_range): # Increment the cursor to point at forward adjacent nodes and enable the connection between them
 				cursor += 1
 				if cursor == N:
 					cursor = 0
@@ -204,9 +204,9 @@ class Network:
 				node.connections[cursor] = 1
 				self.nodes[cursor].connections[index] = 1
 
-			cursor = index
+			cursor = index # Reset the cursor
 
-			for backward in range(neighbour_range):
+			for backward in range(neighbour_range): # Decrement the cursor to point at backward adjacent nodes and enable the connection between them
 				cursor -= 1
 				if cursor == -1:
 					cursor = N - 1
@@ -216,29 +216,27 @@ class Network:
 
 
 	def make_small_world_network(self, N, re_wire_prob=0.2):
-		self.make_ring_network(N, 2)
+		self.make_ring_network(N, 2) # Start with a ring network
 
 		for (index, node) in enumerate(self.nodes):
-			# edge_blacklist = []
-
-			for edge_index, edge in enumerate(node.connections):
-				if edge == 1:  # and not edge_index in edge_blacklist:
+			for (edge_index, edge) in enumerate(node.connections): # Go over each edge and attempt to rewire
+				if edge == 1: # If the edge is already connected to something
 					if np.random.random() < re_wire_prob:
-						while True:
+						while True: # Keep attempting this block of code until a valid condition is met
 							new_connection_index = np.random.randint(0, N)
 
+							# If the new connection index is not equal to the current node (no self-connections allowed) and not equal to the connection
+	   						# index it's already connected to (no repeat connections allowed), and it's not an already existing connection (no repeat
+		  					# connections allowed), then proceed
 							if new_connection_index != index and new_connection_index != edge_index and \
 								node.connections[new_connection_index] != 1 and \
 								self.nodes[new_connection_index].connections[
-								index] != 1:  # and not new_connection_index in edge_blacklist:
-								print("Rewiring edge...")
-								node.connections[new_connection_index] = 1
+								index] != 1:
+								node.connections[new_connection_index] = 1 # Complete the rewire to the new node and unwire from the old node
 								self.nodes[new_connection_index].connections[index] = 1
 
 								node.connections[edge_index] = 0
 								self.nodes[edge_index].connections[index] = 0
-
-								# edge_blacklist.append(new_connection_index)
 								break
 
 
@@ -249,8 +247,8 @@ class Network:
 
 		num_nodes = len(self.nodes)
 		network_radius = num_nodes * 10
-		ax.set_xlim([-1.5 * network_radius, 1.5 * network_radius])
-		ax.set_ylim([-1.5 * network_radius, 1.5 * network_radius])
+		ax.set_xlim([-1.5*network_radius, 1.5*network_radius])
+		ax.set_ylim([-1.5*network_radius, 1.5*network_radius])
 
 		for (i, node) in enumerate(self.nodes):
 			node_angle = i * 2 * np.pi / num_nodes
@@ -260,13 +258,13 @@ class Network:
 			circle = plt.Circle((node_x, node_y), 30, color=cm.hot(node.value))
 			ax.add_patch(circle)
 
-		for neighbour_index in range(i + 1, num_nodes):
-			if node.connections[neighbour_index]:
-				neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
-				neighbour_x = network_radius * np.cos(neighbour_angle)
-				neighbour_y = network_radius * np.sin(neighbour_angle)
+			for neighbour_index in range(i+1, num_nodes):
+				if node.connections[neighbour_index]:
+					neighbour_angle = neighbour_index * 2 * np.pi / num_nodes
+					neighbour_x = network_radius * np.cos(neighbour_angle)
+					neighbour_y = network_radius * np.sin(neighbour_angle)
 
-				ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
+					ax.plot((node_x, neighbour_x), (node_y, neighbour_y), color='black')
 	# END OF TASK 4
 
 	def plot(self):
