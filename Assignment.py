@@ -382,7 +382,7 @@ def create_array(rows, cols):
 	return np.random.choice([-1, 1], size=(rows, cols))
 
 
-a1 = create_array(100, 100)  # creat 100 by 100 array called a1
+a1 = create_array(100, 100)  # creat 100 by 100 2d array called a1
 
 def calculate_agreement(population, row, col, external=0):
 	'''
